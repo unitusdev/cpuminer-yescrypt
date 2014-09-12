@@ -102,15 +102,18 @@ struct workio_cmd {
 
 enum algos {
 	ALGO_SCRYPT,		/* scrypt(1024,1,1) */
-	ALGO_SHA256D,		/* SHA-256d */
+	ALGO_SHA256D,       /* SHA-256d */
+	ALGO_YESCRYPT,		
 };
 
 static const char *algo_names[] = {
 	[ALGO_SCRYPT]		= "scrypt",
 	[ALGO_SHA256D]		= "sha256d",
+	[ALGO_YESCRYPT]		= "yescrypt",
 };
 
 bool opt_debug = false;
+bool opt_hashdebug = false;
 bool opt_protocol = false;
 static bool opt_benchmark = false;
 bool opt_redirect = true;
@@ -128,7 +131,7 @@ static int opt_fail_pause = 30;
 int opt_timeout = 0;
 static int opt_scantime = 5;
 static const bool opt_time = true;
-static enum algos opt_algo = ALGO_SCRYPT;
+static enum algos opt_algo = ALGO_YESCRYPT;
 static int opt_scrypt_n = 1024;
 static int opt_n_threads;
 static int num_processors;
@@ -170,9 +173,10 @@ static char const usage[] = "\
 Usage: " PROGRAM_NAME " [OPTIONS]\n\
 Options:\n\
   -a, --algo=ALGO       specify the algorithm to use\n\
-                          scrypt    scrypt(1024, 1, 1) (default)\n\
+                          scrypt    scrypt(1024, 1, 1)\n\
                           scrypt:N  scrypt(N, 1, 1)\n\
                           sha256d   SHA-256d\n\
+                          yescrypt yescrypt (default)\n\
   -o, --url=URL         URL of mining server\n\
   -O, --userpass=U:P    username:password pair for mining server\n\
   -u, --user=USERNAME   username for mining server\n\
@@ -195,6 +199,7 @@ Options:\n\
       --no-redirect     ignore requests to change the URL of the mining server\n\
   -q, --quiet           disable per-thread hashmeter output\n\
   -D, --debug           enable debug output\n\
+  -H, --hashdebug enable hash debug output\n\
   -P, --protocol-dump   verbose dump of protocol-level activities\n"
 #ifdef HAVE_SYSLOG_H
 "\
@@ -218,7 +223,7 @@ static char const short_options[] =
 #ifdef HAVE_SYSLOG_H
 	"S"
 #endif
-	"a:c:Dhp:Px:qr:R:s:t:T:o:u:O:V";
+	"a:c:DHhp:Px:qr:R:s:t:T:o:u:O:V";
 
 static struct option const options[] = {
 	{ "algo", 1, NULL, 'a' },
@@ -231,6 +236,7 @@ static struct option const options[] = {
 	{ "coinbase-sig", 1, NULL, 1015 },
 	{ "config", 1, NULL, 'c' },
 	{ "debug", 0, NULL, 'D' },
+    { "hashdebug", 0, NULL, 'H' },
 	{ "help", 0, NULL, 'h' },
 	{ "no-gbt", 0, NULL, 1011 },
 	{ "no-getwork", 0, NULL, 1010 },
@@ -637,7 +643,7 @@ static void share_result(int result, const char *reason)
 		   s,
 		   result ? "(yay!!!)" : "(booooo)");
 
-	if (opt_debug && reason)
+	if ((opt_debug || opt_hashdebug) && reason)
 		applog(LOG_DEBUG, "DEBUG: reject reason: %s", reason);
 }
 
@@ -651,8 +657,22 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 
 	/* pass if the previous hash is not the current previous hash */
 	if (!submit_old && memcmp(work->data + 1, g_work.data + 1, 32)) {
-		if (opt_debug)
+		if (opt_debug || opt_hashdebug)
+		{
 			applog(LOG_DEBUG, "DEBUG: stale work detected, discarding");
+			int ii=0;
+			for (ii=0; ii < 32; ii++)
+			{
+				printf ("%.2x",((uint8_t*)(work->data + 1))[ii]);
+			};
+			printf ("\n");
+			for (ii=0; ii < 32; ii++)
+			{
+				printf ("%.2x",((uint8_t*)(g_work.data + 1))[ii]);
+			};
+			printf ("\n");
+			
+		}
 		return true;
 	}
 
@@ -1054,6 +1074,8 @@ static void stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		diff_to_target(work->target, sctx->job.diff);
 }
 
+
+
 static void *miner_thread(void *userdata)
 {
 	struct thr_info *mythr = userdata;
@@ -1144,6 +1166,9 @@ static void *miner_thread(void *userdata)
 			case ALGO_SCRYPT:
 				max64 = opt_scrypt_n < 16 ? 0x3ffff : 0x3fffff / opt_scrypt_n;
 				break;
+			case ALGO_YESCRYPT:
+				max64 = 0x3fffff;
+				break;
 			case ALGO_SHA256D:
 				max64 = 0x1fffff;
 				break;
@@ -1162,6 +1187,11 @@ static void *miner_thread(void *userdata)
 		case ALGO_SCRYPT:
 			rc = scanhash_scrypt(thr_id, work.data, scratchbuf, work.target,
 			                     max_nonce, &hashes_done, opt_scrypt_n);
+			break;
+
+		case ALGO_YESCRYPT:
+			rc = scanhash_yescrypt(thr_id, work.data, work.target,
+			                      max_nonce, &hashes_done);
 			break;
 
 		case ALGO_SHA256D:
@@ -1531,6 +1561,9 @@ static void parse_arg(int key, char *arg, char *pname)
 		break;
 	case 'D':
 		opt_debug = true;
+		break;
+	case 'H':
+		opt_hashdebug = true;
 		break;
 	case 'p':
 		free(rpc_pass);
