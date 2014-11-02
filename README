@@ -1,15 +1,24 @@
-This is a multi-threaded CPU miner for Litecoin and Bitcoin,
-fork of Jeff Garzik's reference cpuminer.
+This is a multi-threaded CPU miner for GlobalBoost-Y (BSTY) using the Yescrypt Algorithm
+(fork of Jeff Garzik's reference cpuminer)
 
 License: GPLv2.  See COPYING for details.
 
-Downloads:  https://sourceforge.net/projects/cpuminer/files/
-Git tree:   https://github.com/pooler/cpuminer
+Git tree:   https://github.com/noncepool/cpuminer-yescrypt
+Windows Binary: https://mega.co.nz/#!uQEQVCbD!PXXZzUHRWA0rnUQWRAp9uAKvCO6222aH1IvWWikLFU8
 
 Dependencies:
 	libcurl			http://curl.haxx.se/libcurl/
 	jansson			http://www.digip.org/jansson/
 		(jansson is included in-tree)
+
+Install Build Dependencies on Debian, Ubuntu and other APT-based distros:
+    sudo apt-get install build-essential libcurl4-openssl-dev
+
+Install Build Dependencies on Fedora, RHEL, CentOS and other yum-based distros:
+    sudo yum install gcc make curl-devel
+
+Install Build Dependencies on OpenSUSE and other ZYpp-based distros:
+    sudo zypper in gcc make libcurl-devel
 
 Basic *nix build instructions:
 	./autogen.sh	# only needed if building from git repo
@@ -55,6 +64,11 @@ Architecture-specific notes:
 
 Usage instructions:  Run "minerd --help" to see options.
 
+To Connect to BSTY-P2Pool using your GlobalBoost-Y Wallet Address:
+    ./minerd --algo=yescrypt -o 54.68.63.254:7225 -u BSTYaddress -p x
+
+Note: Do not mine to online wallet addresses, including exchanges, as you may experience loss of coins due to how newly mined coins are confirmed.
+
 Connecting through a proxy:  Use the --proxy option.
 To use a SOCKS proxy, add a socks4:// or socks5:// prefix to the proxy host.
 Protocols socks4a and socks5h, allowing remote name resolving, are also
@@ -63,6 +77,7 @@ If no protocol is specified, the proxy is assumed to be a HTTP proxy.
 When the --proxy option is not used, the program honors the http_proxy
 and all_proxy environment variables.
 
-Also many issues and FAQs are covered in the forum thread
+Also many issues and FAQs are covered in these forum threads
 dedicated to this program,
 	https://bitcointalk.org/index.php?topic=55038.0
+	https://bitcointalk.org/index.php?topic=775289.0
