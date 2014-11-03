@@ -104,5 +104,5 @@ and all_proxy environment variables.
 
 Also many issues and FAQs are covered in these forum threads dedicated to this program:
 
-	[Original Pooler CPUMiner Bitcointalk Thread](https://bitcointalk.org/index.php?topic=55038.0)
-	[GlobalBoost-Y (BSTY) Bitcointalk Official Thread](https://bitcointalk.org/index.php?topic=775289.0)
+* [Original Pooler CPUMiner Bitcointalk Thread](https://bitcointalk.org/index.php?topic=55038.0)
+* [GlobalBoost-Y BSTY Bitcointalk Official Thread](https://bitcointalk.org/index.php?topic=775289.0)
