@@ -1,12 +1,14 @@
 This is a multi-threaded CPU miner for [GlobalBoost-Y (BSTY)](http://globalboo.st/?CohibAA) using the [Yescrypt Algorithm](litecoin-p2pool.com/yescrypt/yescrypt-v0.pdf)
 
+Further modified for Merge mining on Unitus (http://unitus.info)
+
 (fork of Jeff Garzik's reference cpuminer)
 
 License: GPLv2.  See COPYING for details.
 
-Git tree:   https://github.com/noncepool/cpuminer-yescrypt
+Git tree:   https://github.com/unitus/cpuminer-yescrypt
 
-Windows Binary: https://mega.co.nz/#!uQEQVCbD!PXXZzUHRWA0rnUQWRAp9uAKvCO6222aH1IvWWikLFU8
+Windows Binary: http://unitus.info/yescrypt
 
 Dependencies:
 
