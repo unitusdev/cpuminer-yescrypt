@@ -363,7 +363,7 @@ static bool gbt_work_decode(const json_t *val, struct work *work)
 	unsigned char (*merkle_tree)[32] = NULL;
 	bool coinbase_append = false;
 	bool submit_coinbase = false;
-	bool version_force = false;
+	bool version_force = true;
 	bool version_reduce = false;
 	json_t *tmp, *txa;
 	bool rc = false;
@@ -1167,7 +1167,7 @@ static void *miner_thread(void *userdata)
 				max64 = opt_scrypt_n < 16 ? 0x3ffff : 0x3fffff / opt_scrypt_n;
 				break;
 			case ALGO_YESCRYPT:
-				max64 = 0x3fffff;
+				max64 = 0x1aff;
 				break;
 			case ALGO_SHA256D:
 				max64 = 0x1fffff;
