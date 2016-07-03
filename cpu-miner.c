@@ -129,7 +129,7 @@ static bool opt_quiet = false;
 static int opt_retries = -1;
 static int opt_fail_pause = 30;
 int opt_timeout = 0;
-static int opt_scantime = 5;
+static int opt_scantime = 15;
 static const bool opt_time = true;
 static enum algos opt_algo = ALGO_YESCRYPT;
 static int opt_scrypt_n = 1024;
@@ -1167,7 +1167,7 @@ static void *miner_thread(void *userdata)
 				max64 = opt_scrypt_n < 16 ? 0x3ffff : 0x3fffff / opt_scrypt_n;
 				break;
 			case ALGO_YESCRYPT:
-				max64 = 0x1aff;
+				max64 = 0x2fff;
 				break;
 			case ALGO_SHA256D:
 				max64 = 0x1fffff;

@@ -33,6 +33,10 @@
 
 #include "sha256_Y.h"
 
+#ifndef _MSC_VER
+#define _ALIGN(x) __attribute__ ((aligned(x)))
+#endif
+
 /*
  * Encode a length len/4 vector of (uint32_t) into a length len vector of
  * (unsigned char) in big-endian form.  Assumes len is a multiple of 4.
@@ -91,8 +95,7 @@ be32dec_vect(uint32_t *dst, const unsigned char *src, size_t len)
 static void
 SHA256_Transform(uint32_t * state, const unsigned char block[64])
 {
-	uint32_t W[64];
-	uint32_t S[8];
+	uint32_t _ALIGN(128) W[64], S[8];
 	uint32_t t0, t1;
 	int i;
 
@@ -365,8 +368,8 @@ PBKDF2_SHA256(const uint8_t * passwd, size_t passwdlen, const uint8_t * salt,
 	HMAC_SHA256_CTX_Y PShctx, hctx;
 	size_t i;
 	uint8_t ivec[4];
-	uint8_t U[32];
-	uint8_t T[32];
+	uint8_t _ALIGN(128) U[32];
+	uint8_t _ALIGN(128) T[32];
 	uint64_t j;
 	int k;
 	size_t clen;
