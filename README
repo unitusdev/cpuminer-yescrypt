@@ -22,7 +22,7 @@ Install Build Dependencies on Debian, Ubuntu and other APT-based distros:
 
 Install Build Dependencies on Fedora, RHEL, CentOS and other yum-based distros:
 
-    sudo yum install gcc make curl-devel
+    sudo yum install gcc make curl-devel automake
 
 Install Build Dependencies on OpenSUSE and other ZYpp-based distros:
 
